@@ -12,7 +12,7 @@ public class EmployeeCRUD {
         employees.add(new Employee(102, "Aman", 30000));
 
         // Display employees
-        System.out.println("Employee Details:");
+        System.out.println("Employee Details:");  
 
         for (Employee e : employees) {
             e.display();
