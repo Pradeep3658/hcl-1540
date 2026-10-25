@@ -33,4 +33,7 @@ public class EmpServiceImp {
     public List<Employee> getEmp() {
         return emprepo.getEmp();
     }
+    public String deletebyID(long emp_id) {
+        return emprepo.deletebyID(emp_id);
+    }
 }

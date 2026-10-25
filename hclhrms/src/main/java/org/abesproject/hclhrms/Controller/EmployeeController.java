@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.List;
 
@@ -36,4 +38,10 @@ public class EmployeeController {
     public String addEmpbulk(@RequestBody List<Employee> bulkEmp) {
         return empServiceImp.addEmpbulk(bulkEmp);
     }
+
+    @DeleteMapping("/deleteEmp/{emp_id}")
+    public String deleteEmp(@PathVariable long emp_id) {
+        return empServiceImp.deletebyID(emp_id);
+    }
+    
 }
