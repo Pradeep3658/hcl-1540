@@ -13,6 +13,8 @@ public class Employee {
     private String name;
     private String email;
     private String department;
+    private String designation;
+    private String techStack;
     private double salary;
 
     // Default constructor
@@ -58,6 +60,22 @@ public class Employee {
 
     public void setDepartment(String department) {
         this.department = department;
+    }
+
+    public String getDesignation() {
+        return designation;
+    }
+
+    public void setDesignation(String designation) {
+        this.designation = designation;
+    }
+
+    public String getTechStack() {
+        return techStack;
+    }
+
+    public void setTechStack(String techStack) {
+        this.techStack = techStack;
     }
 
     public double getSalary() {

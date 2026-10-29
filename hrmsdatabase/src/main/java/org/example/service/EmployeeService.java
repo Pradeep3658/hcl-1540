@@ -14,6 +14,10 @@ public class EmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
 
+    public Employee saveEmployee(Employee employee) {
+        return employeeRepository.save(employee);
+    }
+
     // 1. Add Multiple Employees
     public String createnewEmployee() {
 

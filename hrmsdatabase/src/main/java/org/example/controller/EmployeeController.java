@@ -4,8 +4,11 @@ import org.example.model.Employee;
 import org.example.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:5173")
 public class EmployeeController {
 
     @Autowired
@@ -21,6 +24,18 @@ public class EmployeeController {
     @GetMapping("/addEmp")
     public String addnewEmployee() {
         return employeeService.createnewEmployee();
+    }
+
+    @PostMapping("/addEmp")
+    public ResponseEntity<?> createEmployee(@RequestBody Employee employee) {
+        if (employee.getName() == null || employee.getName().isBlank()
+                || employee.getEmail() == null || employee.getEmail().isBlank()
+                || employee.getDesignation() == null || employee.getDesignation().isBlank()
+                || employee.getTechStack() == null || employee.getTechStack().isBlank()) {
+            return ResponseEntity.badRequest().body("name, email, designation, and techStack are required");
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(employeeService.saveEmployee(employee));
     }
 
     // 2. Find Employee By ID
