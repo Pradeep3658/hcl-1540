@@ -1,5 +1,5 @@
-package com.hcld2.jwtdemo.security;
 
+package com.hcld2.jwtdemo.security;
 
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -24,6 +24,7 @@ import java.util.List;
 @EnableWebSecurity
 @AllArgsConstructor
 public class SecurityConfig {
+
     private final JwtAuthFilter jwtAuthFilter;
 
     @Bean
@@ -34,26 +35,32 @@ public class SecurityConfig {
                         s -> s.sessionCreationPolicy(
                                 SessionCreationPolicy.STATELESS))
                 .headers(h -> h.frameOptions(
-                        f->f.sameOrigin()))
+                        f -> f.sameOrigin()))
                 .authorizeHttpRequests(
-                        auth -> auth.requestMatchers(
-                        "/api/v1/**","/h2-console/**","/error").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/v1/posts/**").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/api/v1/posts/**").authenticated()
-                        .anyRequest().authenticated()
-
-                )
+        auth -> auth
+                .requestMatchers(
+                        "/h2-console/**",
+                        "/error",
+                        "/swagger-ui/**",
+                        "/v3/api-docs/**"
+                ).permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/posts/**").authenticated()
+                .anyRequest().authenticated()
+           )
                 .exceptionHandling(
-                        e -> e.authenticationEntryPoint((
-                                req,res,ex)
-                                ->res.sendError(HttpServletResponse.SC_UNAUTHORIZED,"Unauthorized")
+                        e -> e.authenticationEntryPoint(
+                                (req, res, ex) ->
+                                        res.sendError(
+                                                HttpServletResponse.SC_UNAUTHORIZED,
+                                                "Unauthorized")
                         )
+                )
+                .addFilterBefore(
+                        jwtAuthFilter,
+                        UsernamePasswordAuthenticationFilter.class);
 
-    )
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
-
-
     }
 
     @Bean
@@ -64,12 +71,14 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cfg = new CorsConfiguration();
-        cfg.setAllowedHeaders(List.of("http://localhost:5173"));
-        cfg.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
+
+        cfg.setAllowedOrigins(List.of("http://localhost:5173"));
+        cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         cfg.setAllowedHeaders(List.of("*"));
 
         UrlBasedCorsConfigurationSource src = new UrlBasedCorsConfigurationSource();
         src.registerCorsConfiguration("/**", cfg);
+
         return src;
     }
 }
