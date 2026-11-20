@@ -6,6 +6,7 @@ import com.hcld2.jwtdemo.dto.StatusResponse;
 import com.hcld2.jwtdemo.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,11 +21,19 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<StatusResponse> register(@Valid @RequestBody AuthRequest req) {
-        return ResponseEntity.ok(authService.registerUser(req));
+        StatusResponse result = authService.registerUser(req);
+        if ("error".equals(result.type())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(result);
+        }
+        return ResponseEntity.ok(result);
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthRequest req) {
-        return ResponseEntity.ok(authService.login(req));
+        AuthResponse result = authService.login(req);
+        if ("error".equals(result.token())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(result);
+        }
+        return ResponseEntity.ok(result);
     }
 }

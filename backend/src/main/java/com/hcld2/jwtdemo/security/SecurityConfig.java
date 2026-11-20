@@ -39,14 +39,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
         auth -> auth
                 .requestMatchers(
-                        "/h2-console/**",
-                        "/error",
-                        "/swagger-ui/**",
-                        "/v3/api-docs/**"
-                ).permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/posts/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/v1/posts/**").authenticated()
-                .anyRequest().authenticated()
+    "/api/v1/auth/**",
+    "/swagger-ui/**",
+    "/v3/api-docs/**"
+).permitAll()
+.anyRequest().authenticated()
            )
                 .exceptionHandling(
                         e -> e.authenticationEntryPoint(

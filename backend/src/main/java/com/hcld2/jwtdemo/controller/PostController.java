@@ -22,6 +22,7 @@ public class PostController {
     private final PostService postService;
 
     @GetMapping
+    @SecurityRequirement(name = "bearerAuth")
     public List<PostResponse> all() {
         return postService.findAll();
     }
