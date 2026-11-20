@@ -1,0 +1,47 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: jwtdemo-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root123}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-jwtdemo}
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  springboot:
+    build:
+      context: ./backend
+    container_name: jwtdemo-backend
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE:-jwtdemo}
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD:-root123}
+      JWT_SECRET: ${JWT_SECRET:-xnKYScVOZHbyErtzMuV1IQzPkOhCJiwS7ag1nlnXFh7}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-3600000}
+    expose:
+      - "8080"
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: jwtdemo-frontend
+    restart: unless-stopped
+    depends_on:
+      - springboot
+    ports:
+      - "80:80"
+
+volumes:
+  mysql_data:
